@@ -11,55 +11,56 @@ function App() {
 	const [ fps, setFps ] = useState(0)
 
 	useEffect(() => {
-		
-		function initCanvas (width, height){
+		function initCanvas (canvasElement){
 
 			const canvas = document.createElement('canvas')
-			canvas.width = width
-			canvas.height = height
+			canvas.width = canvasElement.width
+			canvas.height = canvasElement.height
 			const ctx = canvas.getContext('2d')
 
-			return (videoElement) => {
-				ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height)
+			return (canvasElement) => {
+				ctx.drawImage(canvasElement, 0, 0, canvas.width, canvas.height)
 				return ctx.getImageData(0, 0, canvas.width, canvas.height)
 			}
 		}
 
-		async function initCamera(maxVideoSize){
+		async function initCamera(maxVideoWidth, maxVideoHeight){
 
 			const stream = await navigator.mediaDevices.getUserMedia({
 				audio: false,
 				video: {
 					facingMode: 'environment',
-					width: maxVideoSize,
-					height: maxVideoSize,
+					width: maxVideoWidth,
+					height: maxVideoHeight,
 				},
 			})
 
 			sourceVideoRef.current.srcObject = stream
 			sourceVideoRef.current.play()
 
-			await delay(250)			//Верь мне, так нужно
+			await delay(250)			// Trust me, it's necessary
 
 			return stream
 		}
 
-		//Отдельная функция для инициализации OpenCV
+		// Separate function to initialize OpenCV
 		async function initCV (){
 			const res = await CV.init()
 
 			return res.status
 		}
 
-		//Функция для загрузки изображения
+		// Function to upload an image
 		async function loadImage(){
-			const getImageData = initCanvas(sourceImageRef.current.naturalWidth, sourceImageRef.current.naturalHeight)
+			const getImageData = initCanvas(sourceImageRef.current)
+			//console.log(sourceImageRef.current);
 			const imageData = getImageData(sourceImageRef.current)
+			//console.log(imageData);
 			const res = await CV.loadSourceImage(imageData)
 			return res
 		}
 
-		//И потом мы объединяем их в одну цепочку
+		// And then we combine them into one chain
 		async function init(){
 			const status = await initCV()
 			const image = await loadImage()
@@ -68,13 +69,13 @@ function App() {
 		}
 		
 
-		Promise.all([ init(), initCamera(600) ]).then(values => {
+		Promise.all([ init(), initCamera(640, 480) ]).then(values => {
 			const { image } = values[0]
 			console.log(image)
 
-			const getImageData = initCanvas(sourceVideoRef.current.videoWidth, sourceVideoRef.current.videoHeight)
+			const getImageData = initCanvas(sourceVideoRef.current)
 			
-			//Мы запускаем цикл, в котором просто будем выводить
+			// We start a loop in which we will simply output
 			async function computeImage() {
 
 				const imageData = getImageData(sourceVideoRef.current)
@@ -82,7 +83,6 @@ function App() {
 				const time = performance.now()
 				const resultImageData = await CV.estimateCameraPosition(image.id, imageData)
 				setFps(Math.round(1000 / (performance.now() - time)))
-
 				canvasRef.current.width = resultImageData.width
 				canvasRef.current.height = resultImageData.height
 				const ctx = canvasRef.current.getContext('2d')
@@ -99,9 +99,9 @@ function App() {
 	return (
 		<div className="App">
 			<div className="fps">{fps} FPS</div>
-			<video ref={sourceVideoRef} playsInline={true} ></video>
+			<video ref={sourceVideoRef} width="640" height="480" playsInline={true} ></video>
 			<canvas ref={canvasRef}></canvas>
-			<img src="/images/box.png" alt="Исходное изображение" style={{display: "none"}} ref={sourceImageRef}/>
+			<img src="/images/box.png" alt="original image" style={{display: "none"}} ref={sourceImageRef}/>
 		</div>
 	);
 }
