@@ -7,10 +7,10 @@ const methods = {
 		if(typeof(cv) !== 'undefined') return { status: "loaded" }
 		self.importScripts('./opencv.js')
 
-		cv = await cv()                                         //Таким образом мы инициализируем OpenCV
+		cv = await cv()                                         // This is how we initialize OpenCV
 
-		orb = new cv.ORB(1000)                                   //А затем сразу создадим ORB
-		bfMatcher = new cv.BFMatcher(cv.NORM_HAMMING, true)    //А заодно и матчер
+		orb = new cv.ORB(1000)                                   // And then immediately create an ORB
+		bfMatcher = new cv.BFMatcher(cv.NORM_HAMMING, true)    // And at the same time the matcher
 
 		console.log(Object.keys(cv))
 
@@ -143,7 +143,7 @@ function clearMemory (memory){
 	memory.queryPointsMat = null
 }
 
-//Просто функции для чистоты кода
+// Just functions to keep the code clean
 function generateFilterArr (rows){
 	const arr = []
 	for(let i = 0; i < rows; i++) 
@@ -152,7 +152,7 @@ function generateFilterArr (rows){
 	return arr
 }
 
-//Отфильтровываем Mat
+// Filtering out Mat
 function filter (mat, arr){
 
 	const rows = arr.reduce((sum, flag) => flag? sum+1: sum, 0)
@@ -176,6 +176,8 @@ function draw (finalImage, projectionMatrix){
 	]
 	const axisT = cv.matFromArray(4, 4, cv.CV_64F, _axis)
 	const axis = axisT.t()
+
+	console.log(projectionMatrix);
 
 	const pointsT = dot(projectionMatrix, axis)
 	const points = pointsT.t()
@@ -299,9 +301,9 @@ function getProjectionMatrix(rvec, tvec, mtx){
 
 function getImageKeypoints(image){
 
-	const keypoints = new cv.KeyPointVector()             //Ключевые точки
+	const keypoints = new cv.KeyPointVector()             // key points
 	const none = new cv.Mat() 
-	const descriptors = new cv.Mat()                              //Дескрипторы точек (т.е. некое уникальное значение)
+	const descriptors = new cv.Mat()                              // Point descriptors (i.e. some unique value)
 
 	orb.detectAndCompute(image, none, keypoints, descriptors)
 
@@ -315,7 +317,7 @@ function getImageKeypoints(image){
 	return { image, keypoints, descriptors, delete: dispose }
 }
 
-//А эта функция переводит mat в imageData для canvas
+//A nd this function translates mat into imageData for canvas
 function imageDataFromMat(mat) {
 	// converts the mat type to cv.CV_8U
 	const img = new cv.Mat()
@@ -351,7 +353,7 @@ function imageDataFromMat(mat) {
 }
 
 
-//В этой функции мы просто вызываем нужный метод и возвращаем ответ
+// In this function, we simply call the desired method and return the response
 onmessage = async function(e) {
 	const { action, payload } = e.data
 
