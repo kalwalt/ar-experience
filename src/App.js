@@ -101,7 +101,7 @@ function App() {
 			<div className="fps">{fps} FPS</div>
 			<video ref={sourceVideoRef} width="640" height="480" playsInline={true} ></video>
 			<canvas ref={canvasRef}></canvas>
-			<img src="/images/box.png" alt="original image" style={{display: "none"}} ref={sourceImageRef}/>
+			<img src="/images/pinball.jpg" alt="original image" style={{display: "none"}} ref={sourceImageRef}/>
 		</div>
 	);
 }

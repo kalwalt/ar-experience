@@ -50,8 +50,9 @@ const methods = {
 
 		let queryPointsMat = null;
 		let trainPointsMat = null;
-
+		//console.log(memoryData[id])
 		if(memoryData[id].trainPointsMat){
+			console.log('before of..!')
 
 			const nextPoints = new cv.Mat()
 			const status = new cv.Mat()
@@ -72,10 +73,11 @@ const methods = {
 		}
 
 		if(!trainPointsMat){
+			//console.log('train points false...')
 			const queryImageData = memoryData[id].keypointsData
 			const trainImageData = getImageKeypoints(imgGray)
 			
-			const a = matchKeypoints(queryImageData, trainImageData, 30)
+			const a = matchKeypoints(queryImageData, trainImageData, 50)
 			
 			queryPointsMat = a.queryPointsMat
 			trainPointsMat = a.trainPointsMat
@@ -95,7 +97,8 @@ const methods = {
 			const inliers = new cv.Mat()
 			cv.solvePnPRansac(queryPointsMat, trainPointsMat, mtx, dist, rvec, tvec, false, 100, 5.0, 0.99, inliers)
 
-			if(inliers.rows / trainPointsMat.rows > 0.9*k){
+			if(inliers.rows / trainPointsMat.rows > 0.2*k){
+				//console.log('Ransac ok!')
 				const projectionMatrix = getProjectionMatrix(rvec, tvec, mtx)
 
 				const filterArr = generateFilterArr(queryPointsMat.rows)
@@ -108,6 +111,7 @@ const methods = {
 
 				draw(finalImage, projectionMatrix)
 				drawPoints(finalImage, trainPointsMat)
+				console.log('Tracking  !!!!');
 				projectionMatrix.delete()
 
 			}else
@@ -233,6 +237,7 @@ function matchKeypoints (queryImageData, trainImageData, threshold = 30){
 	const matches = new cv.DMatchVector()
 
 	if(trainImageData.keypoints.size() > 5)
+		console.log(trainImageData.keypoints.size())
 		bfMatcher.match(queryImageData.descriptors, trainImageData.descriptors, matches)
 
 	const good_matches = []
@@ -256,7 +261,7 @@ function matchKeypoints (queryImageData, trainImageData, threshold = 30){
 	
 	const queryPointsMat = cv.matFromArray(queryPoints.length, 1, cv.CV_32FC3, queryPoints.flat());
 	const trainPointsMat = cv.matFromArray(trainPoints.length, 1, cv.CV_32FC2, trainPoints.flat());
-
+	//console.log(trainPointsMat)
 	matches.delete()
 	return { queryPointsMat, trainPointsMat }
 }
