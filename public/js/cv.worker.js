@@ -212,7 +212,7 @@ function drawPoints(finalImage, mat){
 
 function getCameraMatrix(rows, cols){
 	const f = Math.hypot(cols, rows)/2/(Math.tan(angle/2*Math.PI/180))
-	console.log(f)
+	//console.log(f)
 	const _mtx = [
 		f, 0, cols / 2,
 		0, f, rows / 2 ,
@@ -237,7 +237,7 @@ function matchKeypoints (queryImageData, trainImageData, threshold = 30){
 	const matches = new cv.DMatchVector()
 
 	if(trainImageData.keypoints.size() > 5)
-		console.log(trainImageData.keypoints.size())
+		//console.log(trainImageData.keypoints.size())
 		bfMatcher.match(queryImageData.descriptors, trainImageData.descriptors, matches)
 
 	const good_matches = []

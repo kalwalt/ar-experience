@@ -16,7 +16,7 @@ function App() {
 			const canvas = document.createElement('canvas')
 			canvas.width = canvasElement.width
 			canvas.height = canvasElement.height
-			const ctx = canvas.getContext('2d')
+			const ctx = canvas.getContext('2d', { willReadFrequently : true,})
 
 			return (canvasElement) => {
 				ctx.drawImage(canvasElement, 0, 0, canvas.width, canvas.height)
@@ -101,7 +101,7 @@ function App() {
 			<div className="fps">{fps} FPS</div>
 			<video ref={sourceVideoRef} width="640" height="480" playsInline={true} ></video>
 			<canvas ref={canvasRef}></canvas>
-			<img src="/images/pinball.jpg" alt="original image" style={{display: "none"}} ref={sourceImageRef}/>
+			<img src="/images/pinball.jpg" alt="" style={{display: "none"}} ref={sourceImageRef}/>
 		</div>
 	);
 }
