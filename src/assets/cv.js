@@ -1,25 +1,25 @@
 class CV {
-	
-	constructor(){
+
+	constructor() {
 		this.worker = new Worker('/js/cv.worker.js') // load worker
 		this.waiting = {}
-		
+
 		this.worker.onmessage = (e) => {
 			const { action, payload } = e.data
-			if(this.waiting[action]){
+			if (this.waiting[action]) {
 				this.waiting[action](payload)
 				delete this.waiting[action]
 			}
 		}
 
 		this.worker.onerror = (e) => {
-			console.log(e)
+			console.error("Error in worker: ", e)
 		}
 	}
-	
+
 	//Мы промисифицируем данный метод, чтобы ожидать ответ
-	_dispatch = (action, payload) => new Promise ((res, rej) => {
-		if(this.waiting[action]) return rej (`Action ${action} is not completed`)
+	_dispatch = (action, payload) => new Promise((res, rej) => {
+		if (this.waiting[action]) return rej(`Action ${action} is not completed`)
 
 		this.worker.postMessage({ action, payload })
 		this.waiting[action] = res
@@ -30,24 +30,24 @@ class CV {
 		return this._dispatch("init")
 	}
 
-	convertToGray (imageData){
+	convertToGray(imageData) {
 		return this._dispatch("convertToGray", imageData)
 	}
 
-	loadSourceImage(imageData){
-		return this._dispatch("loadSourceImage", imageData) 
+	loadSourceImage(imageData) {
+		return this._dispatch("loadSourceImage", imageData)
 	}
 
-	matchPoints (sourceImage, imageData){
-		return this._dispatch("matchPoints", { sourceImage, imageData })  
+	matchPoints(sourceImage, imageData) {
+		return this._dispatch("matchPoints", { sourceImage, imageData })
 	}
 
-	calculatePnP (sourceImage, imageData){
-		return this._dispatch("calculatePnP", { sourceImage, imageData }) 
+	calculatePnP(sourceImage, imageData) {
+		return this._dispatch("calculatePnP", { sourceImage, imageData })
 	}
 
-	estimateCameraPosition (id, imageData){
-		return this._dispatch("estimateCameraPosition", { id, imageData }) 
+	estimateCameraPosition(id, imageData) {
+		return this._dispatch("estimateCameraPosition", { id, imageData })
 	}
 
 }

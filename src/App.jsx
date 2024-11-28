@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import CV from './assets/cv.js'
-import { delay } from './assets/delay.js'
+//import { delay } from './assets/delay.js'
 
 function App() {
 
@@ -36,11 +36,13 @@ function App() {
 			})
 			
 			sourceVideoRef.current.srcObject = stream
-			sourceVideoRef.current.play()
-
-			await delay(250)			// Trust me, it's necessary
-
-			return stream
+			
+			return new Promise((resolve) => {
+				sourceVideoRef.current.onloadedmetadata = () => {
+					sourceVideoRef.current.play()
+				  resolve(stream);
+				};
+			  });
 		}
 
 		// Separate function to initialize OpenCV
