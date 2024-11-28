@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import CV from 'services/cv'
-import { delay } from 'services/delay'
+import CV from './assets/cv.js'
+import { delay } from './assets/delay.js'
 
 function App() {
 
@@ -16,7 +16,7 @@ function App() {
 			const canvas = document.createElement('canvas')
 			canvas.width = canvasElement.width
 			canvas.height = canvasElement.height
-			const ctx = canvas.getContext('2d', { willReadFrequently : true,})
+			const ctx = canvas.getContext('2d',  { willReadFrequently: true })
 
 			return (canvasElement) => {
 				ctx.drawImage(canvasElement, 0, 0, canvas.width, canvas.height)
@@ -34,7 +34,7 @@ function App() {
 					height: maxVideoHeight,
 				},
 			})
-
+			
 			sourceVideoRef.current.srcObject = stream
 			sourceVideoRef.current.play()
 
@@ -99,9 +99,15 @@ function App() {
 	return (
 		<div className="App">
 			<div className="fps">{fps} FPS</div>
-			<video ref={sourceVideoRef} width="640" height="480" playsInline={true} ></video>
+			<video ref={sourceVideoRef} 
+			width="640" 
+			height="480" 
+			loop
+			autoPlay
+			muted
+			playsInline ></video>
 			<canvas ref={canvasRef}></canvas>
-			<img src="/images/pinball.jpg" alt="" style={{display: "none"}} ref={sourceImageRef}/>
+			<img src="/images/box.png" alt="original image" style={{display: "none"}} ref={sourceImageRef}/>
 		</div>
 	);
 }
