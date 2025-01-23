@@ -5,9 +5,10 @@ const angle = 35
 const methods = {
 	init: async () => {
 		if(typeof(cv) !== 'undefined') return { status: "loaded" }
-		self.importScripts('./opencv.js')
+		self.importScripts('./opencv_js.js')
 
-		cv = await cv()                                         // This is how we initialize OpenCV
+		cv = await cv()
+		console.log(cv.getBuildInformation())// This is how we initialize OpenCV
 
 		orb = new cv.ORB(1000)                                   // And then immediately create an ORB
 		bfMatcher = new cv.BFMatcher(cv.NORM_HAMMING, true)    // And at the same time the matcher

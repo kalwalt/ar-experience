@@ -59,6 +59,7 @@ function App() {
 			const imageData = getImageData(sourceImageRef.current)
 			//console.log(imageData);
 			const res = await CV.loadSourceImage(imageData)
+			console.log(res)
 			return res
 		}
 
