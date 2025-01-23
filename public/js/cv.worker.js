@@ -5,7 +5,7 @@ const angle = 35
 const methods = {
 	init: async () => {
 		if(typeof(cv) !== 'undefined') return { status: "loaded" }
-		self.importScripts('./opencv.js')
+		self.importScripts('./opencv_js.js')
 
 		cv = await cv()                                         // This is how we initialize OpenCV
 
